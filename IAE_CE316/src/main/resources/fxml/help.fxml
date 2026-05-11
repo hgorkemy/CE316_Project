@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.web.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.iae.controller.HelpController"
+            prefWidth="800" prefHeight="600">
+    <center>
+        <WebView fx:id="webView"/>
+    </center>
+</BorderPane>
