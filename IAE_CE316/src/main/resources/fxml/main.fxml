@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.iae.controller.MainController"
+            prefWidth="900" prefHeight="600">
+
+    <top>
+        <MenuBar>
+            <menus>
+                <Menu text="File">
+                    <items>
+                        <MenuItem text="New Project"    onAction="#onNewProject"/>
+                        <MenuItem text="Open Project"   onAction="#onOpenProject"/>
+                        <SeparatorMenuItem/>
+                        <MenuItem text="Exit" onAction="#onExit"/>
+                    </items>
+                </Menu>
+                <Menu text="Configurations">
+                    <items>
+                        <MenuItem text="Manage Configurations" onAction="#onManageConfigurations"/>
+                    </items>
+                </Menu>
+                <Menu text="Help">
+                    <items>
+                        <MenuItem text="User Manual" onAction="#onHelp"/>
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
+    </top>
+
+    <center>
+        <VBox spacing="10" style="-fx-padding: 15;">
+            <Label text="Projects" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
+            <TableView fx:id="projectTable" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="colName"   text="Project Name" prefWidth="250"/>
+                    <TableColumn fx:id="colConfig" text="Configuration" prefWidth="200"/>
+                    <TableColumn fx:id="colStatus" text="Status"        prefWidth="120"/>
+                    <TableColumn fx:id="colDate"   text="Created At"    prefWidth="180"/>
+                </columns>
+                <placeholder>
+                    <Label text="No projects yet. Click 'New Project' to get started."/>
+                </placeholder>
+            </TableView>
+        </VBox>
+    </center>
+
+    <bottom>
+        <HBox spacing="10" style="-fx-padding: 10; -fx-alignment: center-right;">
+            <Button text="New Project"    onAction="#onNewProject"    style="-fx-pref-width: 120;"/>
+            <Button text="Open Project"   onAction="#onOpenProject"   style="-fx-pref-width: 120;"/>
+            <Button text="Delete Project" onAction="#onDeleteProject"  style="-fx-pref-width: 120;"/>
+        </HBox>
+    </bottom>
+</BorderPane>
