@@ -1,0 +1,16 @@
+# Spec / docs
+316_Project.pdf
+iae-error.log
+
+# Maven
+target/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db

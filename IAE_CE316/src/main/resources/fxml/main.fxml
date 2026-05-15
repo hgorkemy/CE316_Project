@@ -4,6 +4,7 @@
 
 <BorderPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.iae.controller.MainController"
+            stylesheets="@../css/app.css"
             prefWidth="900" prefHeight="600">
 
     <top>

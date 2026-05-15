@@ -6,6 +6,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.io.PrintWriter;
+
 public class Main extends Application {
 
     @Override
@@ -22,6 +24,19 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) {
-        launch(args);
+        Thread.setDefaultUncaughtExceptionHandler((t, e) -> writeCrashLog(e));
+        try {
+            launch(args);
+        } catch (Throwable t) {
+            writeCrashLog(t);
+            throw t;
+        }
+    }
+
+    private static void writeCrashLog(Throwable t) {
+        try (PrintWriter pw = new PrintWriter("iae-error.log")) {
+            t.printStackTrace(pw);
+        } catch (Exception ignored) {}
+        t.printStackTrace(System.err);
     }
 }

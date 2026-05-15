@@ -5,6 +5,7 @@
 <!-- TODO: Oyku will implement this screen -->
 <VBox xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.iae.controller.NewProjectController"
+      stylesheets="@../css/app.css"
       spacing="10" style="-fx-padding: 20;" prefWidth="500" prefHeight="400">
     <Label text="New Project - (to be implemented)" style="-fx-font-size: 14;"/>
 </VBox>

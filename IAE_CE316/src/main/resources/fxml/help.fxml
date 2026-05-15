@@ -4,6 +4,7 @@
 
 <BorderPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.iae.controller.HelpController"
+            stylesheets="@../css/app.css"
             prefWidth="800" prefHeight="600">
     <center>
         <WebView fx:id="webView"/>

@@ -5,6 +5,7 @@
 <!-- TODO: Ant will implement this screen -->
 <BorderPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.iae.controller.ProjectController"
+            stylesheets="@../css/app.css"
             prefWidth="900" prefHeight="600">
     <center>
         <Label text="Project Results - (to be implemented)"
