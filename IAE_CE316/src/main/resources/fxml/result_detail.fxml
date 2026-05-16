@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.iae.controller.ResultDetailController"
+            prefWidth="800"
+            prefHeight="600"
+            stylesheets="@../css/app.css">
+
+    <top>
+        <VBox spacing="8" BorderPane.alignment="CENTER">
+            <padding>
+                <Insets top="15" right="15" bottom="10" left="15"/>
+            </padding>
+
+            <Label text="Result Detail" style="-fx-font-size: 20; -fx-font-weight: bold;"/>
+
+            <GridPane hgap="10" vgap="8">
+                <Label text="Student ID:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                <Label fx:id="studentIdLabel" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                <Label text="Compile Status:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                <Label fx:id="compileStatusLabel" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                <Label text="Run Status:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                <Label fx:id="runStatusLabel" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                <Label text="Output Match:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                <Label fx:id="comparisonStatusLabel" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+            </GridPane>
+        </VBox>
+    </top>
+
+    <center>
+        <VBox spacing="10">
+            <padding>
+                <Insets top="10" right="15" bottom="10" left="15"/>
+            </padding>
+
+            <Label text="Compile Error"/>
+            <TextArea fx:id="compileErrorArea" editable="false" prefRowCount="4"/>
+
+            <Label text="Run Error"/>
+            <TextArea fx:id="runErrorArea" editable="false" prefRowCount="4"/>
+
+            <HBox spacing="10" VBox.vgrow="ALWAYS">
+                <VBox spacing="5" HBox.hgrow="ALWAYS">
+                    <Label text="Expected Output"/>
+                    <TextArea fx:id="expectedOutputArea" editable="false" wrapText="true" VBox.vgrow="ALWAYS"/>
+                </VBox>
+
+                <VBox spacing="5" HBox.hgrow="ALWAYS">
+                    <Label text="Actual Output"/>
+                    <TextArea fx:id="actualOutputArea" editable="false" wrapText="true" VBox.vgrow="ALWAYS"/>
+                </VBox>
+            </HBox>
+        </VBox>
+    </center>
+
+    <bottom>
+        <HBox alignment="CENTER_RIGHT">
+            <padding>
+                <Insets top="10" right="15" bottom="15" left="15"/>
+            </padding>
+            <Button text="Close" onAction="#onClose"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>
