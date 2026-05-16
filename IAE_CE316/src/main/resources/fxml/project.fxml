@@ -1,14 +1,83 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.control.*?>
 
-<!-- TODO: Ant will implement this screen -->
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
 <BorderPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.iae.controller.ProjectController"
-            stylesheets="@../css/app.css"
-            prefWidth="900" prefHeight="600">
+            prefWidth="1000"
+            prefHeight="650"
+            stylesheets="@../css/app.css">
+
+    <top>
+        <VBox spacing="10">
+            <padding>
+                <Insets top="15" right="15" bottom="10" left="15"/>
+            </padding>
+
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="Project:" style="-fx-font-size: 18; -fx-font-weight: bold;"/>
+                <Label fx:id="projectNameLabel" style="-fx-font-size: 18;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label text="Configuration:" style="-fx-font-weight: bold;"/>
+                <Label fx:id="configurationNameLabel"/>
+            </HBox>
+
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="ZIP Directory:" style="-fx-font-weight: bold;"/>
+                <Label fx:id="zipDirectoryLabel" maxWidth="650"/>
+                <Button fx:id="changeZipButton" text="Change" onAction="#onChangeZipDirectory"/>
+            </HBox>
+
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Button fx:id="runButton"
+                        text="RUN"
+                        onAction="#onRun"
+                        style="-fx-font-size: 16; -fx-font-weight: bold; -fx-padding: 8 25 8 25;"/>
+
+                <Label text="Filter:"/>
+                <ComboBox fx:id="filterComboBox" prefWidth="150"/>
+
+                <Button fx:id="exportCsvButton" text="Export CSV" onAction="#onExportCsv"/>
+
+                <Region HBox.hgrow="ALWAYS"/>
+
+                <Label fx:id="messageLabel"/>
+            </HBox>
+        </VBox>
+    </top>
+
     <center>
-        <Label text="Project Results - (to be implemented)"
-               style="-fx-font-size: 14; -fx-padding: 20;"/>
+        <VBox spacing="10">
+            <padding>
+                <Insets top="10" right="15" bottom="10" left="15"/>
+            </padding>
+
+            <TableView fx:id="resultTable" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="studentIdColumn" text="Student ID" prefWidth="160"/>
+                    <TableColumn fx:id="compileColumn" text="Compile" prefWidth="150"/>
+                    <TableColumn fx:id="runColumn" text="Run" prefWidth="150"/>
+                    <TableColumn fx:id="comparisonColumn" text="Output Match" prefWidth="170"/>
+                    <TableColumn fx:id="detailColumn" text="Detail" prefWidth="120"/>
+                </columns>
+            </TableView>
+        </VBox>
     </center>
+
+    <bottom>
+        <VBox spacing="8">
+            <padding>
+                <Insets top="10" right="15" bottom="15" left="15"/>
+            </padding>
+
+            <ProgressBar fx:id="progressBar" prefWidth="Infinity"/>
+
+            <Label fx:id="summaryLabel"
+                   text="Summary: No results yet."
+                   style="-fx-font-weight: bold;"/>
+        </VBox>
+    </bottom>
+
 </BorderPane>
