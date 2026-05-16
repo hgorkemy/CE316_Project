@@ -1,11 +1,126 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.control.*?>
 
-<!-- TODO: Oyku will implement this screen -->
-<VBox xmlns:fx="http://javafx.com/fxml"
-      fx:controller="com.iae.controller.NewProjectController"
-      stylesheets="@../css/app.css"
-      spacing="10" style="-fx-padding: 20;" prefWidth="500" prefHeight="400">
-    <Label text="New Project - (to be implemented)" style="-fx-font-size: 14;"/>
-</VBox>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.iae.controller.NewProjectController"
+            stylesheets="@../css/app.css"
+            prefWidth="560" prefHeight="460">
+
+    <top>
+        <HBox styleClass="title-bar" alignment="CENTER_LEFT" spacing="10">
+            <Label text="Create New Project" styleClass="label-title"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label text="Requirement 3" styleClass="label-hint"/>
+        </HBox>
+    </top>
+
+    <center>
+        <VBox styleClass="form-panel" spacing="16">
+            <padding>
+                <Insets top="22" right="24" bottom="18" left="24"/>
+            </padding>
+
+            <VBox styleClass="form-card" spacing="14" VBox.vgrow="ALWAYS">
+
+                <GridPane hgap="12" vgap="14">
+                    <columnConstraints>
+                        <ColumnConstraints minWidth="150" prefWidth="150"/>
+                        <ColumnConstraints hgrow="ALWAYS"/>
+                        <ColumnConstraints minWidth="90" prefWidth="90"/>
+                    </columnConstraints>
+
+                    <Label text="Project Name"
+                           styleClass="label-form"
+                           GridPane.rowIndex="0"
+                           GridPane.columnIndex="0"/>
+
+                    <TextField fx:id="projectNameField"
+                               promptText="e.g. C Sorting Assignment"
+                               GridPane.rowIndex="0"
+                               GridPane.columnIndex="1"
+                               GridPane.columnSpan="2"/>
+
+                    <Label text="Configuration"
+                           styleClass="label-form"
+                           GridPane.rowIndex="1"
+                           GridPane.columnIndex="0"/>
+
+                    <ComboBox fx:id="configurationComboBox"
+                              promptText="Select configuration"
+                              maxWidth="Infinity"
+                              GridPane.rowIndex="1"
+                              GridPane.columnIndex="1"
+                              GridPane.columnSpan="2"/>
+
+                    <Label text="ZIP Directory"
+                           styleClass="label-form"
+                           GridPane.rowIndex="2"
+                           GridPane.columnIndex="0"/>
+
+                    <TextField fx:id="zipDirectoryField"
+                               promptText="Folder containing student ZIP files"
+                               editable="false"
+                               GridPane.rowIndex="2"
+                               GridPane.columnIndex="1"/>
+
+                    <Button text="Browse"
+                            onAction="#onBrowseZipDirectory"
+                            styleClass="btn-secondary"
+                            GridPane.rowIndex="2"
+                            GridPane.columnIndex="2"/>
+
+                    <Label text="Expected Output"
+                           styleClass="label-form"
+                           GridPane.rowIndex="3"
+                           GridPane.columnIndex="0"/>
+
+                    <TextField fx:id="expectedOutputField"
+                               promptText="Expected output .txt file"
+                               editable="false"
+                               GridPane.rowIndex="3"
+                               GridPane.columnIndex="1"/>
+
+                    <Button text="Browse"
+                            onAction="#onBrowseExpectedOutput"
+                            styleClass="btn-secondary"
+                            GridPane.rowIndex="3"
+                            GridPane.columnIndex="2"/>
+
+                    <Label text="Run Arguments"
+                           styleClass="label-form"
+                           GridPane.rowIndex="4"
+                           GridPane.columnIndex="0"/>
+
+                    <TextField fx:id="runArgsField"
+                               promptText="Optional command line arguments"
+                               GridPane.rowIndex="4"
+                               GridPane.columnIndex="1"
+                               GridPane.columnSpan="2"/>
+                </GridPane>
+
+                <Label text="The project will be saved with the selected configuration, ZIP directory, expected output path, and initial NOT_RUN status."
+                       styleClass="label-hint"
+                       wrapText="true"/>
+
+                <Region VBox.vgrow="ALWAYS"/>
+
+                <HBox spacing="10" alignment="CENTER_RIGHT">
+                    <Button text="Cancel"
+                            onAction="#onCancel"
+                            styleClass="btn-secondary"
+                            prefWidth="110"/>
+
+                    <Button fx:id="createProjectButton"
+                            text="Create Project"
+                            onAction="#onCreateProject"
+                            styleClass="btn-success"
+                            prefWidth="150"
+                            defaultButton="true"/>
+                </HBox>
+            </VBox>
+        </VBox>
+    </center>
+</BorderPane>
