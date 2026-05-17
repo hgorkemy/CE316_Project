@@ -52,7 +52,9 @@ public class MainController implements Initializable {
             Stage dialog = new Stage();
             dialog.initModality(Modality.APPLICATION_MODAL);
             dialog.setTitle("New Project");
-            dialog.setScene(new Scene(loader.load(), 500, 400));
+            dialog.setScene(new Scene(loader.load(), 620, 520));
+            dialog.setMinWidth(620);
+            dialog.setMinHeight(520);
             NewProjectController ctrl = loader.getController();
             ctrl.setOnProjectCreated(this::loadProjects);
             dialog.showAndWait();

@@ -1,0 +1,12 @@
+.root {
+    -fx-font-family: "System";
+    -fx-font-size: 13px;
+}
+
+.button {
+    -fx-cursor: hand;
+}
+
+.table-view .table-row-cell:selected {
+    -fx-background-color: #3d7ebf;
+}

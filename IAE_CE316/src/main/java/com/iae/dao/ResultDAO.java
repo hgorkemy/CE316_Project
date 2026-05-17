@@ -28,7 +28,7 @@ public class ResultDAO implements IResultDAO {
                 run_error         = excluded.run_error,
                 actual_output     = excluded.actual_output,
                 comparison_status = excluded.comparison_status,
-                created_at        = datetime('now')
+                created_at        = datetime('now', 'localtime')
         """;
         try (PreparedStatement ps = conn().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, result.getProjectId());
