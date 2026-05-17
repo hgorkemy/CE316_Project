@@ -54,7 +54,7 @@ public class DatabaseManager {
                 run_command      TEXT NOT NULL,
                 run_args         TEXT,
                 source_filename  TEXT NOT NULL,
-                created_at       TEXT NOT NULL DEFAULT (datetime('now'))
+                created_at       TEXT NOT NULL DEFAULT (datetime('now', 'localtime'))
             )
         """);
 
@@ -67,7 +67,7 @@ public class DatabaseManager {
                 expected_output TEXT,
                 run_args        TEXT,
                 status          TEXT NOT NULL DEFAULT 'NOT_RUN',
-                created_at      TEXT NOT NULL DEFAULT (datetime('now')),
+                created_at      TEXT NOT NULL DEFAULT (datetime('now', 'localtime')),
                 last_run_at     TEXT,
                 FOREIGN KEY (config_id) REFERENCES configurations(id)
             )
@@ -84,7 +84,7 @@ public class DatabaseManager {
                 run_error         TEXT,
                 actual_output     TEXT,
                 comparison_status TEXT,
-                created_at        TEXT NOT NULL DEFAULT (datetime('now')),
+                created_at        TEXT NOT NULL DEFAULT (datetime('now', 'localtime')),
                 FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
                 UNIQUE(project_id, student_id)
             )

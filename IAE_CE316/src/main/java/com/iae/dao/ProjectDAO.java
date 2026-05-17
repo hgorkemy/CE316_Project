@@ -105,7 +105,7 @@ public class ProjectDAO implements IProjectDAO {
 
     @Override
     public void updateStatus(int id, ProjectStatus status) {
-        String sql = "UPDATE projects SET status = ?, last_run_at = datetime('now') WHERE id = ?";
+        String sql = "UPDATE projects SET status = ?, last_run_at = datetime('now', 'localtime') WHERE id = ?";
         try (PreparedStatement ps = conn().prepareStatement(sql)) {
             ps.setString(1, status.name());
             ps.setInt(2, id);
