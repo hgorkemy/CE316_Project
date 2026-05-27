@@ -26,6 +26,8 @@
                 <Menu text="Help">
                     <items>
                         <MenuItem text="User Manual" onAction="#onHelp"/>
+                        <SeparatorMenuItem/>
+                        <MenuItem text="About" onAction="#onAbout"/>
                     </items>
                 </Menu>
             </menus>

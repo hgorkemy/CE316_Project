@@ -105,12 +105,32 @@ public class MainController implements Initializable {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/help.fxml"));
             Stage stage = new Stage();
-            stage.setTitle("User Manual");
+            stage.setTitle("IAE User Manual");
             stage.setScene(new Scene(loader.load(), 800, 600));
+            stage.setMinWidth(800);
+            stage.setMinHeight(600);
             stage.show();
         } catch (Exception e) {
             showError("Failed to open Help: " + e.getMessage());
         }
+    }
+
+    @FXML
+    private void onAbout() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("About IAE");
+        alert.setHeaderText("Integrated Assignment Environment v1.0");
+        alert.setContentText(
+                "CE 316 — Software Engineering\n" +
+                        "Izmir University of Economics\n\n" +
+                        "Team:\n" +
+                        "  Ant Efe Kaynarcali\n" +
+                        "  Efe Cengiz\n" +
+                        "  Egemen Timbil\n" +
+                        "  Halil Gorkem Yigit\n" +
+                        "  Oyku Doga Dabak"
+        );
+        alert.showAndWait();
     }
 
     private void openSelectedProject() {
