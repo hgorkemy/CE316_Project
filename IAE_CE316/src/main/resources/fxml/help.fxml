@@ -1,12 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.web.*?>
 
 <BorderPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.iae.controller.HelpController"
             stylesheets="@../css/app.css"
-            prefWidth="800" prefHeight="600">
+            prefWidth="800"
+            prefHeight="600">
+
+    <top>
+        <HBox spacing="8" alignment="CENTER_LEFT">
+            <padding>
+                <Insets top="8" right="8" bottom="8" left="8"/>
+            </padding>
+
+            <Button fx:id="backButton"
+                    text="Back"
+                    onAction="#onBack"/>
+
+            <Button fx:id="forwardButton"
+                    text="Forward"
+                    onAction="#onForward"/>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <Label text="IAE User Manual"
+                   style="-fx-font-weight: bold;"/>
+        </HBox>
+    </top>
+
     <center>
         <WebView fx:id="webView"/>
     </center>
+
 </BorderPane>
