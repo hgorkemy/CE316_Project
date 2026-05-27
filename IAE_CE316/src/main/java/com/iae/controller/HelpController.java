@@ -3,8 +3,6 @@ package com.iae.controller;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
-import javafx.scene.web.WebEngine;
-import javafx.scene.web.WebHistory;
 import javafx.scene.web.WebView;
 
 import java.net.URL;
@@ -15,58 +13,89 @@ public class HelpController implements Initializable {
     @FXML private WebView webView;
     @FXML private Button backButton;
     @FXML private Button forwardButton;
+    @FXML private Button menuButton;
+
+    private URL helpUrl;
+    private int currentSectionIndex = 0;
+
+    private final String[] sections = {
+            "top",
+            "getting-started",
+            "configurations",
+            "creating-project",
+            "running-project",
+            "viewing-results",
+            "open-save",
+            "examples"
+    };
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        URL helpUrl = getClass().getResource("/help/index.html");
+        helpUrl = getClass().getResource("/help/index.html");
 
         if (helpUrl != null) {
-            webView.getEngine().load(helpUrl.toExternalForm());
+            loadSection(0);
         } else {
             webView.getEngine().loadContent("<h2>Help file not found.</h2>");
         }
 
+        webView.getEngine().locationProperty().addListener((observable, oldLocation, newLocation) -> {
+            updateCurrentSectionFromUrl(newLocation);
+            updateNavigationButtons();
+        });
+
         updateNavigationButtons();
-
-        webView.getEngine().getLoadWorker().stateProperty().addListener(
-                (observable, oldState, newState) -> updateNavigationButtons()
-        );
-
-        webView.getEngine().getHistory().currentIndexProperty().addListener(
-                (observable, oldIndex, newIndex) -> updateNavigationButtons()
-        );
     }
 
     @FXML
     private void onBack() {
-        WebHistory history = webView.getEngine().getHistory();
-
-        if (history.getCurrentIndex() > 0) {
-            history.go(-1);
+        if (currentSectionIndex > 0) {
+            loadSection(currentSectionIndex - 1);
         }
-
-        updateNavigationButtons();
     }
 
     @FXML
     private void onForward() {
-        WebHistory history = webView.getEngine().getHistory();
+        if (currentSectionIndex < sections.length - 1) {
+            loadSection(currentSectionIndex + 1);
+        }
+    }
 
-        if (history.getCurrentIndex() < history.getEntries().size() - 1) {
-            history.go(1);
+    @FXML
+    private void onBackToMenu() {
+        loadSection(0);
+    }
+
+    private void loadSection(int index) {
+        if (helpUrl == null) {
+            return;
         }
 
+        currentSectionIndex = index;
+        String sectionUrl = helpUrl.toExternalForm() + "#" + sections[index];
+        webView.getEngine().load(sectionUrl);
         updateNavigationButtons();
     }
 
+    private void updateCurrentSectionFromUrl(String url) {
+        if (url == null || !url.contains("#")) {
+            currentSectionIndex = 0;
+            return;
+        }
+
+        String fragment = url.substring(url.indexOf("#") + 1);
+
+        for (int i = 0; i < sections.length; i++) {
+            if (sections[i].equals(fragment)) {
+                currentSectionIndex = i;
+                return;
+            }
+        }
+    }
+
     private void updateNavigationButtons() {
-        WebEngine engine = webView.getEngine();
-        WebHistory history = engine.getHistory();
-
-        int currentIndex = history.getCurrentIndex();
-        int historySize = history.getEntries().size();
-
-        backButton.setDisable(currentIndex <= 0);
-        forwardButton.setDisable(currentIndex >= historySize - 1);
+        backButton.setDisable(currentSectionIndex <= 0);
+        forwardButton.setDisable(currentSectionIndex >= sections.length - 1);
+        menuButton.setDisable(currentSectionIndex <= 0);
     }
 }

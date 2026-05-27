@@ -25,6 +25,10 @@
                     text="Forward"
                     onAction="#onForward"/>
 
+            <Button fx:id="menuButton"
+                    text="Back to menu"
+                    onAction="#onBackToMenu"/>
+
             <Region HBox.hgrow="ALWAYS"/>
 
             <Label text="IAE User Manual"
