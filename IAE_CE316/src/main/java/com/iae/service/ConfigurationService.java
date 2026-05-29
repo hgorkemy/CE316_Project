@@ -63,14 +63,26 @@ public class ConfigurationService {
         importExportService.exportAll(getAllConfigurations(), path);
     }
 
-    public Configuration importConfiguration(String path) {
-        Configuration parsed = importExportService.importFromJson(path);
-        parsed.setId(0);
-        if (configDAO.findByName(parsed.getName()) != null) {
-            throw new NameConflictException(parsed.getName(), parsed);
-        }
-        configDAO.save(parsed);
+    /**
+     * Parses a configuration file (single object or array) without saving anything.
+     * The returned configurations always have id = 0 so they are treated as new.
+     */
+    public List<Configuration> parseImportFile(String path) {
+        List<Configuration> parsed = importExportService.importAny(path);
+        for (Configuration c : parsed) c.setId(0);
         return parsed;
+    }
+
+    /** Replaces the configuration that currently owns the given name with the imported one. */
+    public void overwriteConfiguration(Configuration imported) {
+        validate(imported);
+        Configuration existing = configDAO.findByName(imported.getName());
+        if (existing == null) {
+            configDAO.save(imported);
+            return;
+        }
+        imported.setId(existing.getId());
+        configDAO.update(imported);
     }
 
     private void validate(Configuration config) {
@@ -113,8 +125,12 @@ public class ConfigurationService {
             this.parsedConfig = parsedConfig;
         }
 
-        public String getConflictingName() { return conflictingName; }
-        public Configuration getParsedConfig() { return parsedConfig; }
+        public String getConflictingName() { 
+            return conflictingName;
+             }
+        public Configuration getParsedConfig() { 
+            return parsedConfig; 
+            }
     }
 
     public static class ConfigurationInUseException extends RuntimeException {
@@ -125,6 +141,8 @@ public class ConfigurationService {
             this.projectCount = projectCount;
         }
 
-        public int getProjectCount() { return projectCount; }
+        public int getProjectCount() { 
+            return projectCount;
+             }
     }
 }

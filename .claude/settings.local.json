@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mvn compile *)",
+      "Bash(mvn clean *)",
+      "Bash(mvn -o compile)",
+      "Bash(mvn javafx:help -o)"
+    ]
+  }
+}
