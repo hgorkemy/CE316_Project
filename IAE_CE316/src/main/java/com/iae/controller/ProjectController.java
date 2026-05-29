@@ -116,6 +116,11 @@ public class ProjectController {
     }
 
     @FXML
+    private void onBack() {
+        ((Stage) resultTable.getScene().getWindow()).close();
+    }
+
+    @FXML
     private void onRun() {
         if (project == null) return;
 

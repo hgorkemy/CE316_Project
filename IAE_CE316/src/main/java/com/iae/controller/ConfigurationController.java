@@ -25,7 +25,7 @@ public class ConfigurationController implements Initializable {
 
     @FXML private Label formTitleLabel;
     @FXML private TextField nameField;
-    @FXML private TextField languageField;
+    @FXML private ComboBox<String> languageCombo;
     @FXML private CheckBox compileRequiredCheck;
     @FXML private TextField compileCommandField;
     @FXML private TextField compileArgsField;
@@ -52,6 +52,11 @@ public class ConfigurationController implements Initializable {
                 super.updateItem(item, empty);
                 setText(empty || item == null ? null : item.getName());
             }
+        });
+
+        languageCombo.getItems().addAll("Java", "Python", "C", "C++");
+        languageCombo.valueProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null && isFormEmpty()) applyPreset(newVal);
         });
 
         configListView.getSelectionModel().selectedItemProperty()
@@ -223,7 +228,7 @@ public class ConfigurationController implements Initializable {
         editingConfig = c;
         formTitleLabel.setText("Edit Configuration");
         nameField.setText(nullToEmpty(c.getName()));
-        languageField.setText(nullToEmpty(c.getLanguage()));
+        languageCombo.setValue(nullToEmpty(c.getLanguage()));
         compileRequiredCheck.setSelected(c.isCompileRequired());
         compileCommandField.setText(nullToEmpty(c.getCompileCommand()));
         compileArgsField.setText(nullToEmpty(c.getCompileArgs()));
@@ -237,7 +242,8 @@ public class ConfigurationController implements Initializable {
         editingConfig = null;
         formTitleLabel.setText("Configuration Details");
         nameField.clear();
-        languageField.clear();
+        languageCombo.setValue(null);
+        languageCombo.getEditor().clear();
         compileRequiredCheck.setSelected(true);
         compileCommandField.clear();
         compileArgsField.clear();
@@ -250,7 +256,9 @@ public class ConfigurationController implements Initializable {
     private Configuration readForm() {
         Configuration c = new Configuration();
         c.setName(trim(nameField.getText()));
-        c.setLanguage(trim(languageField.getText()));
+        String lang = languageCombo.getEditor().getText();
+        if (lang == null || lang.isBlank()) lang = languageCombo.getValue();
+        c.setLanguage(trim(lang));
         c.setCompileRequired(compileRequiredCheck.isSelected());
         c.setCompileCommand(trim(compileCommandField.getText()));
         c.setCompileArgs(trim(compileArgsField.getText()));
@@ -258,6 +266,50 @@ public class ConfigurationController implements Initializable {
         c.setRunArgs(trim(runArgsField.getText()));
         c.setSourceFileName(trim(sourceFileNameField.getText()));
         return c;
+    }
+
+    private void applyPreset(String language) {
+        switch (language) {
+            case "Java" -> {
+                compileRequiredCheck.setSelected(true);
+                compileCommandField.setText("javac");
+                compileArgsField.setText("{sourceFile}");
+                runCommandField.setText("java");
+                runArgsField.setText("{outputName}");
+                sourceFileNameField.setText("Main.java");
+            }
+            case "Python" -> {
+                compileRequiredCheck.setSelected(false);
+                compileCommandField.clear();
+                compileArgsField.clear();
+                runCommandField.setText("python3");
+                runArgsField.setText("{sourceFile}");
+                sourceFileNameField.setText("main.py");
+            }
+            case "C" -> {
+                compileRequiredCheck.setSelected(true);
+                compileCommandField.setText("gcc");
+                compileArgsField.setText("{sourceFile} -o {outputName}");
+                runCommandField.setText("./{outputName}");
+                runArgsField.setText("{args}");
+                sourceFileNameField.setText("main.c");
+            }
+            case "C++" -> {
+                compileRequiredCheck.setSelected(true);
+                compileCommandField.setText("g++");
+                compileArgsField.setText("{sourceFile} -o {outputName}");
+                runCommandField.setText("./{outputName}");
+                runArgsField.setText("{args}");
+                sourceFileNameField.setText("main.cpp");
+            }
+        }
+        applyCompileFieldsState(compileRequiredCheck.isSelected());
+    }
+
+    private boolean isFormEmpty() {
+        return compileCommandField.getText().isBlank()
+                && runCommandField.getText().isBlank()
+                && sourceFileNameField.getText().isBlank();
     }
 
     private void applyCompileFieldsState(boolean enabled) {

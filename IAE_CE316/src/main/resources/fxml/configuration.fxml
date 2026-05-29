@@ -73,8 +73,9 @@
                                GridPane.rowIndex="0" GridPane.columnIndex="1"/>
 
                     <Label text="Language"            styleClass="label-form" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                    <TextField fx:id="languageField" promptText="e.g. C, Java, Python"
-                               GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                    <ComboBox fx:id="languageCombo" editable="true" maxWidth="Infinity"
+                              promptText="Select or type a language"
+                              GridPane.rowIndex="1" GridPane.columnIndex="1"/>
 
                     <Label text="Compile Required"    styleClass="label-form" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
                     <CheckBox fx:id="compileRequiredCheck" text="Enable compilation step"

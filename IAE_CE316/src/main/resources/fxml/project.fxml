@@ -17,6 +17,7 @@
             </padding>
 
             <HBox spacing="10" alignment="CENTER_LEFT">
+                <Button text="← Back" onAction="#onBack" style="-fx-pref-width: 80;"/>
                 <Label text="Project:" style="-fx-font-size: 18; -fx-font-weight: bold;"/>
                 <Label fx:id="projectNameLabel" style="-fx-font-size: 18;"/>
                 <Region HBox.hgrow="ALWAYS"/>
