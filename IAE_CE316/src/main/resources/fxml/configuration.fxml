@@ -52,6 +52,10 @@
                         styleClass="btn-warning"
                         maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
             </HBox>
+
+            <Button fx:id="exportAllButton" text="Export All" onAction="#onExportAll"
+                    styleClass="btn-warning"
+                    maxWidth="Infinity"/>
         </VBox>
     </left>
 

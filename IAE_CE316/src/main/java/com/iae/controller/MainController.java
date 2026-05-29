@@ -116,7 +116,7 @@ public class MainController implements Initializable {
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("Configurations");
-            stage.setScene(new Scene(loader.load(), 800, 500));
+            stage.setScene(new Scene(loader.load(), 1000, 660));
             stage.showAndWait();
         } catch (Exception e) {
             showError("Failed to open Configurations: " + e.getMessage());
