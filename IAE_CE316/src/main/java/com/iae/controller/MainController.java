@@ -175,6 +175,7 @@ public class MainController implements Initializable {
             ctrl.setProject(project);
             recentService.addRecent(project.getId(), project.getName());
             refreshRecentMenu();
+            stage.setOnHidden(e -> loadProjects());
             stage.show();
         } catch (Exception e) {
             showError("Failed to open project: " + e.getMessage());

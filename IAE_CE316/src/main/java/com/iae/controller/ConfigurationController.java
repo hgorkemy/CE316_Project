@@ -56,7 +56,7 @@ public class ConfigurationController implements Initializable {
 
         languageCombo.getItems().addAll("Java", "Python", "C", "C++");
         languageCombo.valueProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal != null && isFormEmpty()) applyPreset(newVal);
+            if (newVal != null) applyPreset(newVal);
         });
 
         configListView.getSelectionModel().selectedItemProperty()
