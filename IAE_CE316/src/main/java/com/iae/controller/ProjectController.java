@@ -175,7 +175,7 @@ public class ProjectController implements Initializable {
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("Result Detail - " + result.getStudentId());
-            stage.setScene(new Scene(loader.load(), 800, 600));
+            stage.setScene(new Scene(loader.load(), 1100, 700));
             ResultDetailController ctrl = loader.getController();
             String expectedOutput = "";
             try {

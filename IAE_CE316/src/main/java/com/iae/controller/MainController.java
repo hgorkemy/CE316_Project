@@ -57,9 +57,9 @@ public class MainController implements Initializable {
             Stage dialog = new Stage();
             dialog.initModality(Modality.APPLICATION_MODAL);
             dialog.setTitle("New Project");
-            dialog.setScene(new Scene(loader.load(), 620, 520));
-            dialog.setMinWidth(620);
-            dialog.setMinHeight(520);
+            dialog.setScene(new Scene(loader.load(), 720, 560));
+            dialog.setMinWidth(720);
+            dialog.setMinHeight(560);
             NewProjectController ctrl = loader.getController();
             ctrl.setOnProjectCreated(this::loadProjects);
             dialog.showAndWait();
@@ -116,7 +116,7 @@ public class MainController implements Initializable {
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("Configurations");
-            stage.setScene(new Scene(loader.load(), 1000, 660));
+            stage.setScene(new Scene(loader.load(), 1100, 720));
             stage.showAndWait();
         } catch (Exception e) {
             showError("Failed to open Configurations: " + e.getMessage());
@@ -129,8 +129,8 @@ public class MainController implements Initializable {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/help.fxml"));
             Stage stage = new Stage();
             stage.setTitle("IAE User Manual");
-            stage.setScene(new Scene(loader.load(), 800, 600));
-            stage.setMinWidth(800);
+            stage.setScene(new Scene(loader.load(), 1000, 700));
+            stage.setMinWidth(900);
             stage.setMinHeight(600);
             stage.show();
         } catch (Exception e) {
@@ -144,7 +144,7 @@ public class MainController implements Initializable {
         alert.setTitle("About IAE");
         alert.setHeaderText("Integrated Assignment Environment v1.0");
         alert.setContentText(
-                "CE 316 — Software Engineering\n" +
+                "CE 316\n" +
                         "Izmir University of Economics\n\n" +
                         "Team:\n" +
                         "  Ant Efe Kaynarcali\n" +
@@ -170,7 +170,8 @@ public class MainController implements Initializable {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/project.fxml"));
             Stage stage = new Stage();
             stage.setTitle("Project: " + project.getName());
-            stage.setScene(new Scene(loader.load(), 900, 600));
+            stage.setScene(new Scene(loader.load(), 1200, 750));
+            stage.setMaximized(true);
             ProjectController ctrl = loader.getController();
             ctrl.setProject(project);
             recentService.addRecent(project.getId(), project.getName());
