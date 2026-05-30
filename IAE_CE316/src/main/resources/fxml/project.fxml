@@ -39,6 +39,7 @@
             </HBox>
 
             <HBox spacing="10">
+                <Button text="← Back" onAction="#onBack"/>
                 <Button fx:id="btnPreview" text="Preview ZIP Files" onAction="#onPreviewZipFiles"/>
                 <Button fx:id="btnRun" text="Run" onAction="#onRunProject"/>
                 <Button fx:id="btnRefresh" text="Refresh Results" onAction="#onRefreshResults"/>
@@ -69,11 +70,11 @@
                 <Label text="Student Results" style="-fx-font-weight: bold;"/>
                 <TableView fx:id="resultTable" prefHeight="420">
                     <columns>
-                        <TableColumn fx:id="colStudentId" text="Student ID" prefWidth="120"/>
-                        <TableColumn fx:id="colCompileStatus" text="Compile" prefWidth="90"/>
-                        <TableColumn fx:id="colRunStatus" text="Run" prefWidth="90"/>
-                        <TableColumn fx:id="colComparisonStatus" text="Comparison" prefWidth="110"/>
-                        <TableColumn fx:id="colError" text="Error / Details" prefWidth="320"/>
+                        <TableColumn fx:id="colStudentId" text="Student ID" prefWidth="160"/>
+                        <TableColumn fx:id="colCompileStatus" text="Compile" prefWidth="120"/>
+                        <TableColumn fx:id="colRunStatus" text="Run" prefWidth="120"/>
+                        <TableColumn fx:id="colComparisonStatus" text="Comparison" prefWidth="150"/>
+                        <TableColumn fx:id="colDetail" text="View" prefWidth="100"/>
                     </columns>
                 </TableView>
             </VBox>

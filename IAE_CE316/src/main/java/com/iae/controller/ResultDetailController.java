@@ -25,10 +25,20 @@ public class ResultDetailController {
         runStatusLabel.setText(String.valueOf(result.getRunStatus()));
         comparisonStatusLabel.setText(String.valueOf(result.getComparisonStatus()));
 
-        compileErrorArea.setText(emptyIfNull(result.getCompileError()));
-        runErrorArea.setText(emptyIfNull(result.getRunError()));
+        setErrorArea(compileErrorArea, result.getCompileError());
+        setErrorArea(runErrorArea, result.getRunError());
         expectedOutputArea.setText(emptyIfNull(expectedOutput));
         actualOutputArea.setText(emptyIfNull(result.getActualOutput()));
+    }
+
+    private void setErrorArea(TextArea area, String error) {
+        if (error == null || error.isBlank()) {
+            area.setText("No error.");
+            area.setStyle("-fx-text-fill: #2ecc71; -fx-font-family: monospace;");
+        } else {
+            area.setText(error.trim());
+            area.setStyle("-fx-font-family: monospace;");
+        }
     }
 
     @FXML

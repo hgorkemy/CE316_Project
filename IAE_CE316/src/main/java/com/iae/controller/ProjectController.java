@@ -11,19 +11,27 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.HBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -44,7 +52,7 @@ public class ProjectController implements Initializable {
     @FXML private TableColumn<Result, String> colCompileStatus;
     @FXML private TableColumn<Result, String> colRunStatus;
     @FXML private TableColumn<Result, String> colComparisonStatus;
-    @FXML private TableColumn<Result, String> colError;
+    @FXML private TableColumn<Result, Void> colDetail;
 
     private Project project;
     private final RunnerService runnerService = new RunnerService();
@@ -57,7 +65,20 @@ public class ProjectController implements Initializable {
         colCompileStatus.setCellValueFactory(cell -> new SimpleStringProperty(valueOf(cell.getValue().getCompileStatus())));
         colRunStatus.setCellValueFactory(cell -> new SimpleStringProperty(valueOf(cell.getValue().getRunStatus())));
         colComparisonStatus.setCellValueFactory(cell -> new SimpleStringProperty(valueOf(cell.getValue().getComparisonStatus())));
-        colError.setCellValueFactory(cell -> new SimpleStringProperty(firstError(cell.getValue())));
+        colDetail.setCellFactory(col -> new TableCell<>() {
+            private final Button btn = new Button("View");
+            {
+                btn.setOnAction(e -> {
+                    Result result = getTableView().getItems().get(getIndex());
+                    openDetailWindow(result);
+                });
+            }
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                setGraphic(empty ? null : new HBox(btn));
+            }
+        });
 
         resultTable.setItems(results);
         progressBar.setProgress(0);
@@ -72,6 +93,11 @@ public class ProjectController implements Initializable {
         lblStatus.setText(project.getStatus() == null ? "" : project.getStatus().name());
         loadResults();
         previewZipFiles();
+    }
+
+    @FXML
+    private void onBack() {
+        ((javafx.stage.Stage) resultTable.getScene().getWindow()).close();
     }
 
     @FXML
@@ -152,6 +178,25 @@ public class ProjectController implements Initializable {
         previewZipFiles();
     }
 
+    private void openDetailWindow(Result result) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/result_detail.fxml"));
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("Result Detail - " + result.getStudentId());
+            stage.setScene(new Scene(loader.load(), 800, 600));
+            ResultDetailController ctrl = loader.getController();
+            String expectedOutput = "";
+            try {
+                expectedOutput = Files.readString(new File(project.getExpectedOutput()).toPath());
+            } catch (IOException ignored) {}
+            ctrl.setResult(result, expectedOutput);
+            stage.showAndWait();
+        } catch (Exception e) {
+            showError("Failed to open detail: " + e.getMessage());
+        }
+    }
+
     private void loadResults() {
         if (project == null) {
             return;
@@ -191,18 +236,6 @@ public class ProjectController implements Initializable {
 
     private String valueOf(Object value) {
         return value == null ? "" : value.toString();
-    }
-
-    private String firstError(Result result) {
-        if (result.getCompileError() != null && !result.getCompileError().isBlank()) {
-            return result.getCompileError();
-        }
-
-        if (result.getRunError() != null && !result.getRunError().isBlank()) {
-            return result.getRunError();
-        }
-
-        return "";
     }
 
     private void showInfo(String message) {
