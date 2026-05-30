@@ -15,6 +15,8 @@ import com.iae.model.Result;
 import com.iae.model.RunStatus;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.List;
 
 public class RunnerService {
@@ -123,11 +125,23 @@ public class RunnerService {
 
             result.setRunStatus(RunStatus.PASS);
 
-            boolean passed = comparisonService.compare(runResult.getStdout(), project.getExpectedOutput());
+            String expectedContent;
+            try {
+                expectedContent = Files.readString(new File(project.getExpectedOutput()).toPath());
+            } catch (IOException e) {
+                result.setComparisonStatus(ComparisonStatus.SKIPPED);
+                result.setRunError("Could not read expected output file: " + e.getMessage());
+                resultDAO.save(result);
+                done++;
+                notify(listener, "Processing " + studentId + " completed with comparison error. (" + done + "/" + total + ")", done, total);
+                continue;
+            }
+
+            boolean passed = comparisonService.compare(runResult.getStdout(), expectedContent);
             result.setComparisonStatus(passed ? ComparisonStatus.PASS : ComparisonStatus.FAIL);
 
             if (!passed) {
-                result.setRunError(comparisonService.generateDiff(runResult.getStdout(), project.getExpectedOutput()));
+                result.setRunError(comparisonService.generateDiff(runResult.getStdout(), expectedContent));
             }
 
             resultDAO.save(result);
