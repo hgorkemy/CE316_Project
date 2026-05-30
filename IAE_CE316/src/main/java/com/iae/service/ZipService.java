@@ -47,12 +47,18 @@ public class ZipService {
         studentDir.mkdirs();
 
         try {
+            validateZip(zipFile);
             extractZip(zipFile, studentDir);
             return new ZipEntryResult(studentId, zipFile, studentDir, true, null);
         } catch (ZipException e) {
             return new ZipEntryResult(studentId, zipFile, studentDir, false, "ZIP extraction failed: " + e.getMessage());
         } catch (IOException e) {
             return new ZipEntryResult(studentId, zipFile, studentDir, false, "ZIP extraction failed: " + e.getMessage());
+        }
+    }
+
+    private void validateZip(File zipFile) throws IOException {
+        try (java.util.zip.ZipFile ignored = new java.util.zip.ZipFile(zipFile)) {
         }
     }
 
