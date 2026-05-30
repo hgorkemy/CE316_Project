@@ -42,7 +42,6 @@
                 <Button text="← Back" onAction="#onBack"/>
                 <Button fx:id="btnPreview" text="Preview ZIP Files" onAction="#onPreviewZipFiles"/>
                 <Button fx:id="btnRun" text="Run" onAction="#onRunProject"/>
-                <Button fx:id="btnRefresh" text="Refresh Results" onAction="#onRefreshResults"/>
             </HBox>
 
             <ProgressBar fx:id="progressBar" prefWidth="960" progress="0"/>

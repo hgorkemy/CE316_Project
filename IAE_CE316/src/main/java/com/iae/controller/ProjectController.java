@@ -43,7 +43,6 @@ public class ProjectController implements Initializable {
     @FXML private Label lblStatus;
     @FXML private Label lblProgress;
     @FXML private Button btnRun;
-    @FXML private Button btnRefresh;
     @FXML private Button btnPreview;
     @FXML private ProgressBar progressBar;
     @FXML private TextArea logArea;
@@ -115,7 +114,6 @@ public class ProjectController implements Initializable {
         }
 
         btnRun.setDisable(true);
-        btnRefresh.setDisable(true);
         btnPreview.setDisable(true);
         progressBar.setProgress(0);
         logArea.clear();
@@ -137,7 +135,6 @@ public class ProjectController implements Initializable {
 
         task.setOnSucceeded(event -> {
             btnRun.setDisable(false);
-            btnRefresh.setDisable(false);
             btnPreview.setDisable(false);
             progressBar.setProgress(1);
             lblStatus.setText("COMPLETED");
@@ -152,7 +149,6 @@ public class ProjectController implements Initializable {
 
         task.setOnFailed(event -> {
             btnRun.setDisable(false);
-            btnRefresh.setDisable(false);
             btnPreview.setDisable(false);
 
             Throwable error = task.getException();
@@ -166,11 +162,6 @@ public class ProjectController implements Initializable {
         Thread thread = new Thread(task);
         thread.setDaemon(true);
         thread.start();
-    }
-
-    @FXML
-    private void onRefreshResults() {
-        loadResults();
     }
 
     @FXML
