@@ -14,6 +14,9 @@
                     <items>
                         <MenuItem text="New Project"    onAction="#onNewProject"/>
                         <MenuItem text="Open Project"   onAction="#onOpenProject"/>
+                        <MenuItem text="Save Project"   onAction="#onSaveProject"/>
+                        <SeparatorMenuItem/>
+                        <Menu fx:id="recentProjectsMenu" text="Recent Projects"/>
                         <SeparatorMenuItem/>
                         <MenuItem text="Exit" onAction="#onExit"/>
                     </items>
@@ -26,6 +29,8 @@
                 <Menu text="Help">
                     <items>
                         <MenuItem text="User Manual" onAction="#onHelp"/>
+                        <SeparatorMenuItem/>
+                        <MenuItem text="About" onAction="#onAbout"/>
                     </items>
                 </Menu>
             </menus>

@@ -9,7 +9,7 @@
             prefWidth="980" prefHeight="620">
 
     <top>
-        <HBox styleClass="title-bar" alignment="CENTER_LEFT" spacing="12">
+        <HBox styleClass="title-bar" alignment="CENTER_LEFT" spacing="8">
             <Label text="Configuration Manager" styleClass="label-title"/>
             <Region HBox.hgrow="ALWAYS"/>
             <Label text="Manage compile and run profiles for your projects" styleClass="label-hint"/>
@@ -17,12 +17,15 @@
     </top>
 
     <left>
-        <VBox styleClass="side-panel" spacing="14" prefWidth="320">
-            <padding><Insets top="20" right="16" bottom="20" left="20"/></padding>
+        <VBox styleClass="side-panel" spacing="8" prefWidth="320">
+            <padding><Insets top="12" right="12" bottom="12" left="12"/></padding>
 
             <Label text="Configurations" styleClass="label-section"/>
 
-            <ListView fx:id="configListView" VBox.vgrow="ALWAYS"/>
+            <ListView fx:id="configListView"
+                      prefHeight="180"
+                      minHeight="100"
+                      VBox.vgrow="ALWAYS"/>
 
             <Button fx:id="addButton"
                     text="+ New Configuration"
@@ -49,17 +52,21 @@
                         styleClass="btn-warning"
                         maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
             </HBox>
+
+            <Button fx:id="exportAllButton" text="Export All" onAction="#onExportAll"
+                    styleClass="btn-warning"
+                    maxWidth="Infinity"/>
         </VBox>
     </left>
 
     <center>
-        <VBox styleClass="form-panel" spacing="14">
-            <padding><Insets top="20" right="24" bottom="20" left="20"/></padding>
+        <VBox styleClass="form-panel" spacing="8">
+            <padding><Insets top="12" right="16" bottom="12" left="16"/></padding>
 
             <Label fx:id="formTitleLabel" text="Configuration Details" styleClass="label-title"/>
 
-            <VBox styleClass="form-card" spacing="14" VBox.vgrow="ALWAYS">
-                <GridPane hgap="14" vgap="12">
+            <VBox styleClass="form-card" spacing="8" VBox.vgrow="ALWAYS">
+                <GridPane hgap="12" vgap="7">
                     <columnConstraints>
                         <ColumnConstraints minWidth="150" prefWidth="150"/>
                         <ColumnConstraints hgrow="ALWAYS"/>
@@ -70,8 +77,9 @@
                                GridPane.rowIndex="0" GridPane.columnIndex="1"/>
 
                     <Label text="Language"            styleClass="label-form" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                    <TextField fx:id="languageField" promptText="e.g. C, Java, Python"
-                               GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                    <ComboBox fx:id="languageCombo" editable="true" maxWidth="Infinity"
+                              promptText="Select or type a language"
+                              GridPane.rowIndex="1" GridPane.columnIndex="1"/>
 
                     <Label text="Compile Required"    styleClass="label-form" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
                     <CheckBox fx:id="compileRequiredCheck" text="Enable compilation step"
@@ -98,7 +106,6 @@
                                GridPane.rowIndex="7" GridPane.columnIndex="1"/>
                 </GridPane>
 
-                <Region VBox.vgrow="ALWAYS"/>
 
                 <HBox spacing="10" alignment="CENTER_RIGHT">
                     <Button fx:id="cancelButton" text="Cancel" onAction="#onCancel"

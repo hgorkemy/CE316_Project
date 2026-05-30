@@ -4,24 +4,327 @@
     <meta charset="UTF-8">
     <title>IAE User Manual</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 30px; line-height: 1.6; }
-        h1 { color: #2c3e50; }
-        h2 { color: #34495e; border-bottom: 1px solid #ccc; padding-bottom: 5px; }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+            line-height: 1.6;
+            color: #222;
+        }
+
+        h1 {
+            color: #2c3e50;
+        }
+
+        h2 {
+            color: #34495e;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 5px;
+            margin-top: 30px;
+        }
+
+        h3 {
+            color: #34495e;
+            margin-bottom: 5px;
+        }
+
+        a {
+            color: #2c3e50;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        code {
+            background-color: #f0f0f0;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-family: Consolas, monospace;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 10px;
+            margin-bottom: 15px;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .note {
+            background-color: #fff8d8;
+            border-left: 4px solid #f1c40f;
+            padding: 10px;
+            margin: 12px 0;
+        }
+
+        .warning {
+            background-color: #fdecea;
+            border-left: 4px solid #e74c3c;
+            padding: 10px;
+            margin: 12px 0;
+        }
+
+        .manual-menu {
+    font-size: 15px;
+    margin-bottom: 25px;
+   }
     </style>
 </head>
 <body>
-    <h1>IAE - Integrated Assignment Environment</h1>
-    <h2>1. Creating a Project</h2>
-    <p>Click <strong>File > New Project</strong>. Enter the project name, select a configuration,
-    choose the student ZIP folder, and set the expected output file.</p>
-    <h2>2. Managing Configurations</h2>
-    <p>Open <strong>Configurations > Manage Configurations</strong> to create, edit, or delete
-    language configurations. You can also import/export them as JSON files.</p>
-    <h2>3. Running a Project</h2>
-    <p>Open a project and click <strong>RUN</strong>. IAE will extract each student ZIP,
-    compile/run the code, and compare the output.</p>
-    <h2>4. Viewing Results</h2>
-    <p>After running, the results table shows each student's compile, run, and output
-    comparison status. Click <strong>View</strong> on any row for details.</p>
+
+<h1 id="top">IAE - Integrated Assignment Environment</h1>
+
+<p class="manual-menu">
+    <a href="#getting-started">Getting Started</a> |
+    <a href="#configurations">Configurations</a> |
+    <a href="#creating-project">Creating a Project</a> |
+    <a href="#running-project">Running a Project</a> |
+    <a href="#viewing-results">Viewing Results</a> |
+    <a href="#open-save">Open/Save Projects</a> |
+    <a href="#examples">Example Configurations</a>
+</p>
+
+<p>
+    This user manual explains how to use IAE for creating configurations, creating projects,
+    running student ZIP submissions, viewing results, and exporting reports.
+</p>
+
+<h2 id="getting-started">1. Getting Started</h2>
+<p>
+    IAE is a desktop application that helps instructors process programming assignments.
+    The application can extract student ZIP files, compile and run source code, compare the
+    actual output with the expected output, and show the results in a table.
+</p>
+
+<ol>
+    <li>Create or import a configuration.</li>
+    <li>Create a new project.</li>
+    <li>Select the folder that contains student ZIP files.</li>
+    <li>Select the expected output file.</li>
+    <li>Run the project.</li>
+    <li>Review or export the results.</li>
+</ol>
+
+<div class="note">
+    Before creating a project, at least one configuration must exist.
+</div>
+
+<h2 id="configurations">2. Configurations</h2>
+<p>
+    Configurations define how student code should be compiled and executed.
+    Open the configuration screen from <strong>Configurations &gt; Manage Configurations</strong>.
+</p>
+
+<h3>Creating a configuration</h3>
+<ol>
+    <li>Click <strong>+ New Configuration</strong>.</li>
+    <li>Enter a configuration name.</li>
+    <li>Enter the programming language.</li>
+    <li>Select whether compilation is required.</li>
+    <li>Enter compile command and compile arguments if needed.</li>
+    <li>Enter run command and run arguments.</li>
+    <li>Enter the expected source file name.</li>
+    <li>Click <strong>Save Configuration</strong>.</li>
+</ol>
+
+<h3>Editing and deleting configurations</h3>
+<p>
+    Select a configuration from the list. Then use <strong>Edit</strong> or
+    <strong>Delete</strong>. A configuration that is used by a project may not be deleted.
+</p>
+
+<h3>Import and export</h3>
+<p>
+    Use <strong>Import JSON</strong> to import a configuration from a JSON file.
+    Use <strong>Export JSON</strong> to save the selected configuration as a JSON file.
+</p>
+
+<h2 id="creating-project">3. Creating a Project</h2>
+<p>
+    A project stores the selected configuration, ZIP directory, expected output file,
+    optional run arguments, status, and results.
+</p>
+
+<ol>
+    <li>Click <strong>File &gt; New Project</strong> or the <strong>New Project</strong> button.</li>
+    <li>Enter the project name.</li>
+    <li>Select a configuration.</li>
+    <li>Click <strong>Browse</strong> and select the folder that contains student ZIP files.</li>
+    <li>Click <strong>Browse</strong> and select the expected output text file.</li>
+    <li>Enter optional run arguments if the assignment needs them.</li>
+    <li>Click <strong>Create Project</strong>.</li>
+</ol>
+
+<table>
+    <tr>
+        <th>Field</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>Project Name</td>
+        <td>Name of the assignment project.</td>
+    </tr>
+    <tr>
+        <td>Configuration</td>
+        <td>The compile and run profile used for the project.</td>
+    </tr>
+    <tr>
+        <td>ZIP Directory</td>
+        <td>The folder containing student ZIP submissions.</td>
+    </tr>
+    <tr>
+        <td>Expected Output</td>
+        <td>The correct output file used for comparison.</td>
+    </tr>
+    <tr>
+        <td>Run Arguments</td>
+        <td>Optional command line arguments.</td>
+    </tr>
+</table>
+
+<h2 id="running-project">4. Running a Project</h2>
+<p>
+    Open a project by double-clicking it from the main table or by selecting it and clicking
+    <strong>Open Project</strong>.
+</p>
+
+<ol>
+    <li>Check the selected ZIP directory.</li>
+    <li>Click <strong>Change</strong> if you need to select another ZIP folder.</li>
+    <li>Click <strong>RUN</strong>.</li>
+    <li>Wait until the progress bar finishes.</li>
+</ol>
+
+<p>
+    IAE extracts each ZIP file, finds the source file, compiles it if required,
+    runs the program, compares the output, and saves the result.
+</p>
+
+<h2 id="viewing-results">5. Viewing Results</h2>
+<p>
+    After running a project, the result table shows one row for each student submission.
+</p>
+
+<table>
+    <tr>
+        <th>Column</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>Student ID</td>
+        <td>The student ID read from the ZIP file name.</td>
+    </tr>
+    <tr>
+        <td>Compile</td>
+        <td>Shows whether compilation passed, failed, or was skipped.</td>
+    </tr>
+    <tr>
+        <td>Run</td>
+        <td>Shows whether the program ran successfully, failed, timed out, or was skipped.</td>
+    </tr>
+    <tr>
+        <td>Output Match</td>
+        <td>Shows whether the actual output matches the expected output.</td>
+    </tr>
+    <tr>
+        <td>Detail</td>
+        <td>Click <strong>View</strong> to see detailed result information.</td>
+    </tr>
+</table>
+
+<h3>Filtering results</h3>
+<p>
+    The filter combo box can show <strong>All</strong>, <strong>Pass</strong>,
+    <strong>Fail</strong>, <strong>Compile Error</strong>, or <strong>Timeout</strong> results.
+</p>
+
+<h3>Detail window</h3>
+<p>
+    The detail window shows compile errors, run errors, expected output, and actual output.
+</p>
+
+<h3>CSV export</h3>
+<p>
+    Click <strong>Export CSV</strong> to save the project results as a CSV file.
+</p>
+
+<h2 id="open-save">6. Open and Save Projects</h2>
+<p>
+    Projects are listed on the main screen. When the application is opened again,
+    saved projects are loaded from the database.
+</p>
+
+<ul>
+    <li>Double-click a project to open it.</li>
+    <li>Or select a project and click <strong>Open Project</strong>.</li>
+</ul>
+
+<p>
+    When a project is opened, its name, configuration, ZIP directory, summary,
+    and previously saved results are shown.
+</p>
+
+<div class="note">
+    Project data and results are stored by the application, so they can be accessed later.
+</div>
+
+<h2 id="examples">7. Example Configurations</h2>
+
+<h3>C example</h3>
+<table>
+    <tr><th>Field</th><th>Value</th></tr>
+    <tr><td>Name</td><td>C Config</td></tr>
+    <tr><td>Language</td><td>C</td></tr>
+    <tr><td>Compile Required</td><td>Enabled</td></tr>
+    <tr><td>Compile Command</td><td><code>gcc</code></td></tr>
+    <tr><td>Compile Args</td><td><code>{sourceFile} -o {outputName}</code></td></tr>
+    <tr><td>Run Command</td><td><code>./{outputName}</code></td></tr>
+    <tr><td>Run Args</td><td><code>{args}</code></td></tr>
+    <tr><td>Source File Name</td><td><code>main.c</code></td></tr>
+</table>
+
+<h3>Python example</h3>
+<table>
+    <tr><th>Field</th><th>Value</th></tr>
+    <tr><td>Name</td><td>Python 3</td></tr>
+    <tr><td>Language</td><td>Python</td></tr>
+    <tr><td>Compile Required</td><td>Disabled</td></tr>
+    <tr><td>Compile Command</td><td>Leave empty</td></tr>
+    <tr><td>Compile Args</td><td>Leave empty</td></tr>
+    <tr><td>Run Command</td><td><code>python</code></td></tr>
+    <tr><td>Run Args</td><td><code>{sourceFile} {args}</code></td></tr>
+    <tr><td>Source File Name</td><td><code>main.py</code></td></tr>
+</table>
+
+<h3>Java example</h3>
+<table>
+    <tr><th>Field</th><th>Value</th></tr>
+    <tr><td>Name</td><td>Java 17</td></tr>
+    <tr><td>Language</td><td>Java</td></tr>
+    <tr><td>Compile Required</td><td>Enabled</td></tr>
+    <tr><td>Compile Command</td><td><code>javac</code></td></tr>
+    <tr><td>Compile Args</td><td><code>{sourceFile}</code></td></tr>
+    <tr><td>Run Command</td><td><code>java</code></td></tr>
+    <tr><td>Run Args</td><td><code>Main {args}</code></td></tr>
+    <tr><td>Source File Name</td><td><code>Main.java</code></td></tr>
+</table>
+
+<div class="warning">
+    Commands may change depending on the operating system and installed compiler.
+    Test configurations on the target computer before grading.
+</div>
+
 </body>
 </html>

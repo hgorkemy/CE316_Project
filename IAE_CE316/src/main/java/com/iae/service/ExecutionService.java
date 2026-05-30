@@ -38,7 +38,10 @@ public class ExecutionService {
 
         String resolvedArgs = (runArgs == null ? "" : runArgs);
         String argTemplate = config.getRunArgs() == null ? "" : config.getRunArgs();
-        String finalArgs = argTemplate.replace("{args}", resolvedArgs);
+        String finalArgs = argTemplate
+                .replace("{outputName}", outputName)
+                .replace("{sourceFile}", sourceFile)
+                .replace("{args}", resolvedArgs);
 
         String runCommand = config.getRunCommand().replace("{outputName}", outputName);
 

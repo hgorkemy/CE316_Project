@@ -1,163 +1,162 @@
 package com.iae.controller;
 
-import com.iae.dao.ConfigurationDAO;
-import com.iae.dao.ProjectDAO;
+import com.iae.dao.IResultDAO;
 import com.iae.dao.ResultDAO;
-import com.iae.model.*;
-import com.iae.service.*;
+import com.iae.model.Project;
+import com.iae.model.Result;
+import com.iae.service.RunnerService;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
-import javafx.stage.DirectoryChooser;
-import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Files;
+import java.util.List;
+import java.util.ResourceBundle;
 
-public class ProjectController {
+public class ProjectController implements Initializable {
 
-    @FXML private Label projectNameLabel;
-    @FXML private Label configurationNameLabel;
-    @FXML private Label zipDirectoryLabel;
-    @FXML private Label messageLabel;
-    @FXML private Label summaryLabel;
-
-    @FXML private Button runButton;
-    @FXML private Button changeZipButton;
-    @FXML private Button exportCsvButton;
-
-    @FXML private ComboBox<String> filterComboBox;
+    @FXML private Label lblProjectName;
+    @FXML private Label lblConfiguration;
+    @FXML private Label lblZipDirectory;
+    @FXML private Label lblStatus;
+    @FXML private Label lblProgress;
+    @FXML private Button btnRun;
+    @FXML private Button btnPreview;
     @FXML private ProgressBar progressBar;
-
+    @FXML private TextArea logArea;
     @FXML private TableView<Result> resultTable;
-    @FXML private TableColumn<Result, String> studentIdColumn;
-    @FXML private TableColumn<Result, String> compileColumn;
-    @FXML private TableColumn<Result, String> runColumn;
-    @FXML private TableColumn<Result, String> comparisonColumn;
-    @FXML private TableColumn<Result, Void> detailColumn;
+    @FXML private TableColumn<Result, String> colStudentId;
+    @FXML private TableColumn<Result, String> colCompileStatus;
+    @FXML private TableColumn<Result, String> colRunStatus;
+    @FXML private TableColumn<Result, String> colComparisonStatus;
+    @FXML private TableColumn<Result, Void> colDetail;
 
     private Project project;
-
-    private final ProjectDAO projectDAO = new ProjectDAO();
-    private final ConfigurationDAO configurationDAO = new ConfigurationDAO();
-    private final ResultDAO resultDAO = new ResultDAO();
-
-    private final ReportService reportService = new ReportService(resultDAO);
-
-    private final ProjectService projectService =
-            new ProjectService(projectDAO, configurationDAO);
-
-    private final RunnerService runnerService =
-            new RunnerService(
-                    new ZipService(),
-                    new ExecutionService(),
-                    new ComparisonService(),
-                    reportService,
-                    projectService,
-                    configurationDAO
-            );
-
+    private final RunnerService runnerService = new RunnerService();
+    private final IResultDAO resultDAO = new ResultDAO();
     private final ObservableList<Result> results = FXCollections.observableArrayList();
-    private FilteredList<Result> filteredResults;
 
-    @FXML
-    private void initialize() {
-        filterComboBox.setItems(FXCollections.observableArrayList(
-                "All", "Pass", "Fail", "Compile Error", "Timeout"
-        ));
-        filterComboBox.getSelectionModel().select("All");
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        colStudentId.setCellValueFactory(new PropertyValueFactory<>("studentId"));
+        colCompileStatus.setCellValueFactory(cell -> new SimpleStringProperty(valueOf(cell.getValue().getCompileStatus())));
+        colRunStatus.setCellValueFactory(cell -> new SimpleStringProperty(valueOf(cell.getValue().getRunStatus())));
+        colComparisonStatus.setCellValueFactory(cell -> new SimpleStringProperty(valueOf(cell.getValue().getComparisonStatus())));
+        colDetail.setCellFactory(col -> new TableCell<>() {
+            private final Button btn = new Button("View");
+            {
+                btn.setOnAction(e -> {
+                    Result result = getTableView().getItems().get(getIndex());
+                    openDetailWindow(result);
+                });
+            }
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                setGraphic(empty ? null : new HBox(btn));
+            }
+        });
 
-        studentIdColumn.setCellValueFactory(data ->
-                new SimpleStringProperty(data.getValue().getStudentId()));
-
-        compileColumn.setCellValueFactory(data ->
-                new SimpleStringProperty(String.valueOf(data.getValue().getCompileStatus())));
-
-        runColumn.setCellValueFactory(data ->
-                new SimpleStringProperty(String.valueOf(data.getValue().getRunStatus())));
-
-        comparisonColumn.setCellValueFactory(data ->
-                new SimpleStringProperty(String.valueOf(data.getValue().getComparisonStatus())));
-
-        setStatusCellStyle(compileColumn);
-        setStatusCellStyle(runColumn);
-        setStatusCellStyle(comparisonColumn);
-        addDetailButtons();
-
-        filteredResults = new FilteredList<>(results, r -> true);
-        resultTable.setItems(filteredResults);
-
-        resultTable.setPlaceholder(new Label("No results yet. Click Run to start."));
-
-        filterComboBox.setOnAction(e -> applyFilter());
-
-        progressBar.setVisible(false);
-        messageLabel.setText("");
+        resultTable.setItems(results);
+        progressBar.setProgress(0);
+        lblProgress.setText("Ready");
     }
 
     public void setProject(Project project) {
         this.project = project;
-
-        projectNameLabel.setText(project.getName());
-        configurationNameLabel.setText(project.getConfigName());
-        zipDirectoryLabel.setText(project.getZipDirectory());
-
-        refreshResults();
+        lblProjectName.setText(project.getName());
+        lblConfiguration.setText(project.getConfigName() == null ? "Configuration ID: " + project.getConfigId() : project.getConfigName());
+        lblZipDirectory.setText(project.getZipDirectory() == null ? "" : project.getZipDirectory());
+        lblStatus.setText(project.getStatus() == null ? "" : project.getStatus().name());
+        loadResults();
+        previewZipFiles();
     }
 
     @FXML
-    private void onRun() {
-        if (project == null) return;
+    private void onBack() {
+        ((javafx.stage.Stage) resultTable.getScene().getWindow()).close();
+    }
 
-        runButton.setDisable(true);
-        changeZipButton.setDisable(true);
-        exportCsvButton.setDisable(true);
-        progressBar.setVisible(true);
+    @FXML
+    private void onRunProject() {
+        if (project == null) {
+            showError("Project was not loaded.");
+            return;
+        }
+
+        List<File> zipFiles = runnerService.findZipFiles(project);
+
+        if (zipFiles.isEmpty()) {
+            showWarning("No ZIP files found in the selected directory.");
+            return;
+        }
+
+        btnRun.setDisable(true);
+        btnPreview.setDisable(true);
         progressBar.setProgress(0);
-        messageLabel.setText("Running project...");
+        logArea.clear();
+        appendLog("Starting run for " + zipFiles.size() + " ZIP files.");
 
-        Task<Void> task = new Task<>() {
+        Task<Integer> task = new Task<>() {
             @Override
-            protected Void call() {
-                runnerService.runProject(project, progress -> updateProgress(progress, 1.0));
-                return null;
+            protected Integer call() {
+                return runnerService.runProject(project, (message, done, total) -> Platform.runLater(() -> {
+                    appendLog(message);
+                    lblProgress.setText(message);
+
+                    if (total > 0) {
+                        progressBar.setProgress((double) done / total);
+                    }
+                }));
             }
         };
 
-        progressBar.progressProperty().bind(task.progressProperty());
+        task.setOnSucceeded(event -> {
+            btnRun.setDisable(false);
+            btnPreview.setDisable(false);
+            progressBar.setProgress(1);
+            lblStatus.setText("COMPLETED");
+            loadResults();
 
-        task.setOnSucceeded(e -> {
-            progressBar.progressProperty().unbind();
-            progressBar.setVisible(false);
-            runButton.setDisable(false);
-            changeZipButton.setDisable(false);
-            exportCsvButton.setDisable(false);
-
-            messageLabel.setText("Run completed.");
-            refreshResults();
+            int processed = task.getValue();
+            String message = "Run completed. " + processed + " students processed.";
+            lblProgress.setText(message);
+            appendLog(message);
+            showInfo(message);
         });
 
-        task.setOnFailed(e -> {
-            progressBar.progressProperty().unbind();
-            progressBar.setVisible(false);
-            runButton.setDisable(false);
-            changeZipButton.setDisable(false);
-            exportCsvButton.setDisable(false);
+        task.setOnFailed(event -> {
+            btnRun.setDisable(false);
+            btnPreview.setDisable(false);
 
-            Throwable ex = task.getException();
-            showError("Run failed: " + (ex == null ? "Unknown error" : ex.getMessage()));
-            messageLabel.setText("Run failed.");
-            refreshResults();
+            Throwable error = task.getException();
+            String message = error == null ? "Run failed." : error.getMessage();
+            lblProgress.setText("Run failed.");
+            appendLog("Run failed: " + message);
+            loadResults();
+            showError("Run failed: " + message);
         });
 
         Thread thread = new Thread(task);
@@ -166,107 +165,8 @@ public class ProjectController {
     }
 
     @FXML
-    private void onChangeZipDirectory() {
-        if (project == null) return;
-
-        DirectoryChooser chooser = new DirectoryChooser();
-        chooser.setTitle("Select ZIP Directory");
-
-        File current = new File(project.getZipDirectory());
-        if (current.exists() && current.isDirectory()) {
-            chooser.setInitialDirectory(current);
-        }
-
-        File selected = chooser.showDialog(currentWindow());
-        if (selected == null) return;
-
-        project.setZipDirectory(selected.getAbsolutePath());
-        projectDAO.update(project);
-        zipDirectoryLabel.setText(project.getZipDirectory());
-
-        showInfo("ZIP directory updated.");
-    }
-
-    @FXML
-    private void onExportCsv() {
-        if (project == null) return;
-
-        FileChooser chooser = new FileChooser();
-        chooser.setTitle("Export Results as CSV");
-        chooser.setInitialFileName(project.getName().replaceAll("[^a-zA-Z0-9._-]", "_") + "_results.csv");
-        chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV files", "*.csv"));
-
-        File file = chooser.showSaveDialog(currentWindow());
-        if (file == null) return;
-
-        try {
-            reportService.exportCsv(project.getId(), file.getAbsolutePath());
-            showInfo("CSV exported successfully.");
-        } catch (RuntimeException e) {
-            showError(e.getMessage());
-        }
-    }
-
-    private void refreshResults() {
-        if (project == null) return;
-
-        results.setAll(reportService.getResults(project.getId()));
-        applyFilter();
-
-        if (results.isEmpty()) {
-            summaryLabel.setText("Summary: No results yet.");
-            messageLabel.setText("No results yet. Click Run to start.");
-        } else {
-            summaryLabel.setText(reportService.generateSummary(project.getId()));
-            messageLabel.setText("");
-        }
-    }
-
-    private void applyFilter() {
-        String filter = filterComboBox.getSelectionModel().getSelectedItem();
-
-        filteredResults.setPredicate(result -> {
-            if (filter == null || filter.equals("All")) {
-                return true;
-            }
-
-            return switch (filter) {
-                case "Pass" ->
-                        result.getCompileStatus() == CompileStatus.PASS
-                                && result.getRunStatus() == RunStatus.PASS
-                                && result.getComparisonStatus() == ComparisonStatus.PASS;
-
-                case "Fail" ->
-                        result.getComparisonStatus() == ComparisonStatus.FAIL;
-
-                case "Compile Error" ->
-                        result.getCompileStatus() == CompileStatus.FAIL;
-
-                case "Timeout" ->
-                        result.getRunStatus() == RunStatus.TIMEOUT;
-
-                default -> true;
-            };
-        });
-    }
-
-    private void addDetailButtons() {
-        detailColumn.setCellFactory(column -> new TableCell<>() {
-            private final Button button = new Button("View");
-
-            {
-                button.setOnAction(e -> {
-                    Result result = getTableView().getItems().get(getIndex());
-                    openDetailWindow(result);
-                });
-            }
-
-            @Override
-            protected void updateItem(Void item, boolean empty) {
-                super.updateItem(item, empty);
-                setGraphic(empty ? null : new HBox(button));
-            }
-        });
+    private void onPreviewZipFiles() {
+        previewZipFiles();
     }
 
     private void openDetailWindow(Result result) {
@@ -275,56 +175,69 @@ public class ProjectController {
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("Result Detail - " + result.getStudentId());
-            stage.setScene(new Scene(loader.load(), 800, 600));
-
-            ResultDetailController controller = loader.getController();
-            String expectedOutput = Files.readString(new File(project.getExpectedOutput()).toPath());
-            controller.setResult(result, expectedOutput);
-
+            stage.setScene(new Scene(loader.load(), 1100, 700));
+            ResultDetailController ctrl = loader.getController();
+            String expectedOutput = "";
+            try {
+                expectedOutput = Files.readString(new File(project.getExpectedOutput()).toPath());
+            } catch (IOException ignored) {}
+            ctrl.setResult(result, expectedOutput);
             stage.showAndWait();
         } catch (Exception e) {
-            showError("Failed to open result detail: " + e.getMessage());
+            showError("Failed to open detail: " + e.getMessage());
         }
     }
 
-    private void setStatusCellStyle(TableColumn<Result, String> column) {
-        column.setCellFactory(col -> new TableCell<>() {
-            @Override
-            protected void updateItem(String status, boolean empty) {
-                super.updateItem(status, empty);
+    private void loadResults() {
+        if (project == null) {
+            return;
+        }
 
-                if (empty || status == null) {
-                    setText(null);
-                    setStyle("");
-                    return;
-                }
-
-                setText(status);
-
-                switch (status) {
-                    case "PASS" -> setStyle("-fx-text-fill: green; -fx-font-weight: bold;");
-                    case "FAIL", "ERROR" -> setStyle("-fx-text-fill: red; -fx-font-weight: bold;");
-                    case "TIMEOUT" -> setStyle("-fx-text-fill: orange; -fx-font-weight: bold;");
-                    case "SKIPPED" -> setStyle("-fx-text-fill: gray; -fx-font-weight: bold;");
-                    default -> setStyle("");
-                }
-            }
-        });
+        results.setAll(resultDAO.findByProjectId(project.getId()));
     }
 
-    private Stage currentWindow() {
-        return (Stage) resultTable.getScene().getWindow();
+    private void previewZipFiles() {
+        if (project == null) {
+            return;
+        }
+
+        List<File> zipFiles = runnerService.findZipFiles(project);
+        logArea.clear();
+
+        if (zipFiles.isEmpty()) {
+            appendLog("No ZIP files found in the selected directory.");
+            lblProgress.setText("No ZIP files found.");
+            progressBar.setProgress(0);
+            return;
+        }
+
+        appendLog("Found " + zipFiles.size() + " ZIP files:");
+
+        for (File zipFile : zipFiles) {
+            appendLog("✓ " + zipFile.getName());
+        }
+
+        lblProgress.setText("Found " + zipFiles.size() + " ZIP files.");
+        progressBar.setProgress(0);
+    }
+
+    private void appendLog(String message) {
+        logArea.appendText(message + System.lineSeparator());
+    }
+
+    private String valueOf(Object value) {
+        return value == null ? "" : value.toString();
     }
 
     private void showInfo(String message) {
-        Platform.runLater(() ->
-                new Alert(Alert.AlertType.INFORMATION, message, ButtonType.OK).showAndWait()
-        );
+        new Alert(Alert.AlertType.INFORMATION, message, ButtonType.OK).showAndWait();
+    }
+
+    private void showWarning(String message) {
+        new Alert(Alert.AlertType.WARNING, message, ButtonType.OK).showAndWait();
     }
 
     private void showError(String message) {
-        Platform.runLater(() ->
-                new Alert(Alert.AlertType.ERROR, message, ButtonType.OK).showAndWait()
-        );
+        new Alert(Alert.AlertType.ERROR, message, ButtonType.OK).showAndWait();
     }
 }

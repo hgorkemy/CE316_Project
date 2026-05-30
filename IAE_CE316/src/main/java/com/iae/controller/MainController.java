@@ -4,6 +4,7 @@ import com.iae.dao.ProjectDAO;
 import com.iae.dao.IProjectDAO;
 import com.iae.model.Project;
 import com.iae.model.ProjectStatus;
+import com.iae.service.RecentProjectsService;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -16,6 +17,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.net.URL;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -26,8 +28,10 @@ public class MainController implements Initializable {
     @FXML private TableColumn<Project, String> colConfig;
     @FXML private TableColumn<Project, ProjectStatus> colStatus;
     @FXML private TableColumn<Project, String> colDate;
+    @FXML private Menu recentProjectsMenu;
 
     private final IProjectDAO projectDAO = new ProjectDAO();
+    private final RecentProjectsService recentService = new RecentProjectsService();
     private final ObservableList<Project> projects = FXCollections.observableArrayList();
 
     @Override
@@ -43,6 +47,7 @@ public class MainController implements Initializable {
         });
 
         loadProjects();
+        refreshRecentMenu();
     }
 
     @FXML
@@ -52,9 +57,9 @@ public class MainController implements Initializable {
             Stage dialog = new Stage();
             dialog.initModality(Modality.APPLICATION_MODAL);
             dialog.setTitle("New Project");
-            dialog.setScene(new Scene(loader.load(), 620, 520));
-            dialog.setMinWidth(620);
-            dialog.setMinHeight(520);
+            dialog.setScene(new Scene(loader.load(), 720, 560));
+            dialog.setMinWidth(720);
+            dialog.setMinHeight(560);
             NewProjectController ctrl = loader.getController();
             ctrl.setOnProjectCreated(this::loadProjects);
             dialog.showAndWait();
@@ -66,6 +71,22 @@ public class MainController implements Initializable {
     @FXML
     private void onOpenProject() {
         openSelectedProject();
+    }
+
+    @FXML
+    private void onSaveProject() {
+        Project selected = projectTable.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            showWarning("Please select a project to save.");
+            return;
+        }
+        projectDAO.update(selected);
+        recentService.addRecent(selected.getId(), selected.getName());
+        refreshRecentMenu();
+        Alert info = new Alert(Alert.AlertType.INFORMATION,
+                "Project '" + selected.getName() + "' has been saved.", ButtonType.OK);
+        info.setTitle("Save Project");
+        info.showAndWait();
     }
 
     @FXML
@@ -82,6 +103,8 @@ public class MainController implements Initializable {
         Optional<ButtonType> result = confirm.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.YES) {
             projectDAO.delete(selected.getId());
+            recentService.remove(selected.getId());
+            refreshRecentMenu();
             loadProjects();
         }
     }
@@ -93,7 +116,7 @@ public class MainController implements Initializable {
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("Configurations");
-            stage.setScene(new Scene(loader.load(), 800, 500));
+            stage.setScene(new Scene(loader.load(), 1100, 720));
             stage.showAndWait();
         } catch (Exception e) {
             showError("Failed to open Configurations: " + e.getMessage());
@@ -105,12 +128,32 @@ public class MainController implements Initializable {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/help.fxml"));
             Stage stage = new Stage();
-            stage.setTitle("User Manual");
-            stage.setScene(new Scene(loader.load(), 800, 600));
+            stage.setTitle("IAE User Manual");
+            stage.setScene(new Scene(loader.load(), 1000, 700));
+            stage.setMinWidth(900);
+            stage.setMinHeight(600);
             stage.show();
         } catch (Exception e) {
             showError("Failed to open Help: " + e.getMessage());
         }
+    }
+
+    @FXML
+    private void onAbout() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("About IAE");
+        alert.setHeaderText("Integrated Assignment Environment v1.0");
+        alert.setContentText(
+                "CE 316\n" +
+                        "Izmir University of Economics\n\n" +
+                        "Team:\n" +
+                        "  Ant Efe Kaynarcali\n" +
+                        "  Efe Cengiz\n" +
+                        "  Egemen Timbil\n" +
+                        "  Halil Gorkem Yigit\n" +
+                        "  Oyku Doga Dabak"
+        );
+        alert.showAndWait();
     }
 
     private void openSelectedProject() {
@@ -119,16 +162,60 @@ public class MainController implements Initializable {
             showWarning("Please select a project to open.");
             return;
         }
+        openProject(selected);
+    }
+
+    private void openProject(Project project) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/project.fxml"));
             Stage stage = new Stage();
-            stage.setTitle("Project: " + selected.getName());
-            stage.setScene(new Scene(loader.load(), 900, 600));
+            stage.setTitle("Project: " + project.getName());
+            stage.setScene(new Scene(loader.load(), 1200, 750));
+            stage.setMaximized(true);
             ProjectController ctrl = loader.getController();
-            ctrl.setProject(selected);
+            ctrl.setProject(project);
+            recentService.addRecent(project.getId(), project.getName());
+            refreshRecentMenu();
+            stage.setOnHidden(e -> loadProjects());
             stage.show();
         } catch (Exception e) {
             showError("Failed to open project: " + e.getMessage());
+        }
+    }
+
+    private void openProjectById(int projectId) {
+        Project project = projectDAO.findById(projectId);
+        if (project == null) {
+            showWarning("This project no longer exists. It may have been deleted.");
+            recentService.remove(projectId);
+            refreshRecentMenu();
+            return;
+        }
+        openProject(project);
+    }
+
+    private void refreshRecentMenu() {
+        if (recentProjectsMenu == null) return;
+        recentProjectsMenu.getItems().clear();
+        List<RecentProjectsService.RecentEntry> entries = recentService.getRecent();
+        if (entries.isEmpty()) {
+            MenuItem empty = new MenuItem("(No recent projects)");
+            empty.setDisable(true);
+            recentProjectsMenu.getItems().add(empty);
+        } else {
+            for (RecentProjectsService.RecentEntry entry : entries) {
+                MenuItem item = new MenuItem(entry.name);
+                final int id = entry.id;
+                item.setOnAction(e -> openProjectById(id));
+                recentProjectsMenu.getItems().add(item);
+            }
+            recentProjectsMenu.getItems().add(new SeparatorMenuItem());
+            MenuItem clearItem = new MenuItem("Clear Recent Projects");
+            clearItem.setOnAction(e -> {
+                entries.forEach(en -> recentService.remove(en.id));
+                refreshRecentMenu();
+            });
+            recentProjectsMenu.getItems().add(clearItem);
         }
     }
 
