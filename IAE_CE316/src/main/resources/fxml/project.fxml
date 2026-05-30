@@ -1,84 +1,83 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 
 <BorderPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.iae.controller.ProjectController"
-            prefWidth="1000"
-            prefHeight="650"
-            stylesheets="@../css/app.css">
+            stylesheets="@../css/app.css"
+            prefWidth="1000" prefHeight="650">
 
     <top>
-        <VBox spacing="10">
+        <VBox spacing="8" BorderPane.alignment="CENTER">
             <padding>
-                <Insets top="15" right="15" bottom="10" left="15"/>
+                <Insets top="12" right="12" bottom="8" left="12"/>
             </padding>
 
-            <HBox spacing="10" alignment="CENTER_LEFT">
-                <Button text="← Back" onAction="#onBack" style="-fx-pref-width: 80;"/>
-                <Label text="Project:" style="-fx-font-size: 18; -fx-font-weight: bold;"/>
-                <Label fx:id="projectNameLabel" style="-fx-font-size: 18;"/>
-                <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="lblProjectName" text="Project" style="-fx-font-size: 20; -fx-font-weight: bold;"/>
+
+            <HBox spacing="10">
                 <Label text="Configuration:" style="-fx-font-weight: bold;"/>
-                <Label fx:id="configurationNameLabel"/>
+                <Label fx:id="lblConfiguration" text="-"/>
+                <Label text="Status:" style="-fx-font-weight: bold;"/>
+                <Label fx:id="lblStatus" text="-"/>
             </HBox>
 
-            <HBox spacing="10" alignment="CENTER_LEFT">
+            <HBox spacing="10">
                 <Label text="ZIP Directory:" style="-fx-font-weight: bold;"/>
-                <Label fx:id="zipDirectoryLabel" maxWidth="650"/>
-                <Button fx:id="changeZipButton" text="Change" onAction="#onChangeZipDirectory"/>
+                <Label fx:id="lblZipDirectory" text="-"/>
             </HBox>
 
-            <HBox spacing="10" alignment="CENTER_LEFT">
-                <Button fx:id="runButton"
-                        text="RUN"
-                        onAction="#onRun"
-                        style="-fx-font-size: 16; -fx-font-weight: bold; -fx-padding: 8 25 8 25;"/>
-
-                <Label text="Filter:"/>
-                <ComboBox fx:id="filterComboBox" prefWidth="150"/>
-
-                <Button fx:id="exportCsvButton" text="Export CSV" onAction="#onExportCsv"/>
-
-                <Region HBox.hgrow="ALWAYS"/>
-
-                <Label fx:id="messageLabel"/>
+            <HBox spacing="10">
+                <Button fx:id="btnPreview" text="Preview ZIP Files" onAction="#onPreviewZipFiles"/>
+                <Button fx:id="btnRun" text="Run" onAction="#onRunProject"/>
+                <Button fx:id="btnRefresh" text="Refresh Results" onAction="#onRefreshResults"/>
             </HBox>
+
+            <ProgressBar fx:id="progressBar" prefWidth="960" progress="0"/>
+            <Label fx:id="lblProgress" text="Ready"/>
+            <Separator/>
         </VBox>
     </top>
 
     <center>
-        <VBox spacing="10">
-            <padding>
-                <Insets top="10" right="15" bottom="10" left="15"/>
-            </padding>
+        <SplitPane dividerPositions="0.35">
+            <VBox spacing="6">
+                <padding>
+                    <Insets top="8" right="8" bottom="8" left="12"/>
+                </padding>
 
-            <TableView fx:id="resultTable" VBox.vgrow="ALWAYS">
-                <columns>
-                    <TableColumn fx:id="studentIdColumn" text="Student ID" prefWidth="160"/>
-                    <TableColumn fx:id="compileColumn" text="Compile" prefWidth="150"/>
-                    <TableColumn fx:id="runColumn" text="Run" prefWidth="150"/>
-                    <TableColumn fx:id="comparisonColumn" text="Output Match" prefWidth="170"/>
-                    <TableColumn fx:id="detailColumn" text="Detail" prefWidth="120"/>
-                </columns>
-            </TableView>
-        </VBox>
+                <Label text="Run Log" style="-fx-font-weight: bold;"/>
+                <TextArea fx:id="logArea" editable="false" wrapText="true" prefRowCount="20"/>
+            </VBox>
+
+            <VBox spacing="6">
+                <padding>
+                    <Insets top="8" right="12" bottom="8" left="8"/>
+                </padding>
+
+                <Label text="Student Results" style="-fx-font-weight: bold;"/>
+                <TableView fx:id="resultTable" prefHeight="420">
+                    <columns>
+                        <TableColumn fx:id="colStudentId" text="Student ID" prefWidth="120"/>
+                        <TableColumn fx:id="colCompileStatus" text="Compile" prefWidth="90"/>
+                        <TableColumn fx:id="colRunStatus" text="Run" prefWidth="90"/>
+                        <TableColumn fx:id="colComparisonStatus" text="Comparison" prefWidth="110"/>
+                        <TableColumn fx:id="colError" text="Error / Details" prefWidth="320"/>
+                    </columns>
+                </TableView>
+            </VBox>
+        </SplitPane>
     </center>
-
-    <bottom>
-        <VBox spacing="8">
-            <padding>
-                <Insets top="10" right="15" bottom="15" left="15"/>
-            </padding>
-
-            <ProgressBar fx:id="progressBar" prefWidth="Infinity"/>
-
-            <Label fx:id="summaryLabel"
-                   text="Summary: No results yet."
-                   style="-fx-font-weight: bold;"/>
-        </VBox>
-    </bottom>
 
 </BorderPane>
