@@ -33,3 +33,9 @@ bin/
 
 ### Maven ###
 target/
+dependency-reduced-pom.xml
+
+### Installer build output ###
+installer/
+installer2/
+dist/

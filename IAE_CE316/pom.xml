@@ -62,23 +62,21 @@
                 </configuration>
             </plugin>
 
-            <!-- Fat JAR (tüm bağımlılıklar içinde) -->
+            <!-- Copy runtime dependencies next to the application JAR for jpackage. -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.5.2</version>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.7.0</version>
                 <executions>
                     <execution>
+                        <id>copy-runtime-dependencies</id>
                         <phase>package</phase>
                         <goals>
-                            <goal>shade</goal>
+                            <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
-                            <transformers>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>com.iae.Main</mainClass>
-                                </transformer>
-                            </transformers>
+                            <includeScope>runtime</includeScope>
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
