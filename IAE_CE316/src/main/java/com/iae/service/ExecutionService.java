@@ -45,6 +45,13 @@ public class ExecutionService {
 
         String runCommand = config.getRunCommand().replace("{outputName}", outputName);
 
+        // On Windows, ProcessBuilder does not search the working directory for executables.
+        // If the command is a local executable (no path separator), prepend the working directory.
+        File localExe = new File(workingDir, runCommand);
+        if (localExe.exists()) {
+            runCommand = localExe.getAbsolutePath();
+        }
+
         List<String> command = new ArrayList<>();
         command.add(runCommand);
         for (String arg : finalArgs.split("\\s+")) {

@@ -107,6 +107,9 @@
                 </GridPane>
 
 
+                <Label text="⚠ Default values are preset for Windows. For Linux/macOS, use python3 instead of python, and ./{outputName} instead of {outputName}.exe for Run Command."
+                       styleClass="label-hint" wrapText="true"/>
+
                 <HBox spacing="10" alignment="CENTER_RIGHT">
                     <Button fx:id="cancelButton" text="Cancel" onAction="#onCancel"
                             styleClass="btn-secondary" prefWidth="110"/>
