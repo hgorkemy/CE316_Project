@@ -430,7 +430,7 @@ public class ConfigurationController implements Initializable {
                 compileRequiredCheck.setSelected(false);
                 compileCommandField.clear();
                 compileArgsField.clear();
-                runCommandField.setText("python3");
+                runCommandField.setText("python");
                 runArgsField.setText("{sourceFile}");
                 sourceFileNameField.setText("main.py");
             }
@@ -438,7 +438,7 @@ public class ConfigurationController implements Initializable {
                 compileRequiredCheck.setSelected(true);
                 compileCommandField.setText("gcc");
                 compileArgsField.setText("{sourceFile} -o {outputName}");
-                runCommandField.setText("./{outputName}");
+                runCommandField.setText("{outputName}.exe");
                 runArgsField.setText("{args}");
                 sourceFileNameField.setText("main.c");
             }
@@ -446,7 +446,7 @@ public class ConfigurationController implements Initializable {
                 compileRequiredCheck.setSelected(true);
                 compileCommandField.setText("g++");
                 compileArgsField.setText("{sourceFile} -o {outputName}");
-                runCommandField.setText("./{outputName}");
+                runCommandField.setText("{outputName}.exe");
                 runArgsField.setText("{args}");
                 sourceFileNameField.setText("main.cpp");
             }
